@@ -1,0 +1,98 @@
+%\documentclass{article}
+
+\input{preamble}
+
+%\addbibresource{Projecte_A.bib}
+%\usepackage{graphicx}
+
+\title{Projecte A - Grafs}
+\author{
+Aleix Boné Ribó\\
+Alex Herrero Pons\\
+Alex González Godoy\\
+Albert Mercadé Plasencia\\
+}
+\date{Setembre 2019}
+
+\begin{document}
+
+\thispagestyle{empty}
+\clearpage
+\setcounter{page}{-1}
+
+\begin{titlepage}
+{
+    \centering
+    \null
+    \vfill
+    {\Large Projecte d'Algorísmia\par}
+    \vspace{2em}
+    {\Huge \bfseries 
+    Transició de fase i components connexes en grafs aleatoris
+    \par}
+    \vspace{2em}
+    {\large \scshape 
+    Grau A \qquad Tardor Curs 2019-2020
+    \par}
+    \vfill
+\begin{center}
+    
+\end{center}
+    \vspace{3cm}
+
+    \vfill
+    {\raggedleft \large
+Aleix Boné Ribó\\
+Alex Herrero Pons\\
+Alex González Godoy\\
+Albert Mercadé Plasencia\\
+        \par}
+}
+\end{titlepage}
+
+\pagebreak
+\pagenumbering{Roman} 
+
+\tableofcontents
+\pagebreak
+\pagenumbering{arabic} 
+
+\section{Introducció}
+Per raons d'eficiència hem implementat la classe \texttt{Graph} amb llistes d'adjacència. 
+
+\section{Generació dels Grafs}
+\subsection{Random Binomial Graphs}
+Per generar un Random Binamial Graph (RBG) ens hem basat en el model d'Erdős-Rényi \cite{Erdos1960OnGraphs,Erdos1959OnI} que per un graf $G=(V,E)$ diu que
+
+\begin{equation}
+    \forall u,v \in V,\quad (u,v) \in E \text{ amb probabilitat } p
+\end{equation}
+
+Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
+
+\subsection{Random Geometric Graphs}
+Un Random Geometric Graphs (RGG)\cite{noauthor_random_2019-1} per tot vèrtex $v \in V$ li assignem unes coordenades ($x_v, y_v$) aleatòries entre 0 i 1. Cada vèrtex 
+
+\begin{align}
+    \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
+    \text{dist}(u,v) &= \sqrt{\left(x_v - x_u\right)^2 + \left(y_v - y_u\right)^2}
+\end{align}
+
+\section{Càlcul de Components Connexos}
+
+\section{Càlcul Adaptatiu}
+
+\section{Anàlisis de Resultats}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{figures/bin_graph_04.pdf}
+    \caption{Connectivitat de BRG per diferents valors de n}
+    \label{fig:connect_04}
+\end{figure}
+
+\pagebreak
+
+\printbibliography
+
+\end{document}
