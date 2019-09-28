@@ -2,6 +2,14 @@
 
 \input{preamble}
 
+\setminted{
+frame=lines,
+framesep=2mm,
+baselinestretch=0.2,
+fontsize=\footnotesize,
+linenos
+}
+
 %\addbibresource{Projecte_A.bib}
 %\usepackage{graphicx}
 
@@ -71,7 +79,7 @@ Per generar un Random Binamial Graph (RBG) ens hem basat en el model d'Erdős-R�
 Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
 
 \subsection{Random Geometric Graphs}
-Un Random Geometric Graphs (RGG)\cite{noauthor_random_2019-1} per tot vèrtex $v \in V$ li assignem unes coordenades ($x_v, y_v$) aleatòries entre 0 i 1. Cada vèrtex 
+Un Random Geometric Graphs (RGG)\cite{Diaz2007On} per tot vèrtex $v \in V$ li assignem unes coordenades ($x_v, y_v$) aleatòries entre 0 i 1. Cada vèrtex 
 
 \begin{align}
     \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
@@ -86,10 +94,16 @@ Un Random Geometric Graphs (RGG)\cite{noauthor_random_2019-1} per tot vèrtex $v
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=10cm]{figures/bin_graph_04.pdf}
+    \includegraphics[width=10cm]{plots/bin_mult_2_04.pdf}
     \caption{Connectivitat de BRG per diferents valors de n}
     \label{fig:connect_04}
 \end{figure}
+
+\begin{listing}
+\inputminted{cpp}{src/graph.h}
+\caption{test}
+\label{lst:test}
+\end{listing}
 
 \pagebreak
 
