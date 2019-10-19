@@ -66,7 +66,7 @@ Albert Mercadé Plasencia\\
 \pagenumbering{arabic} 
 
 \section{Introducció}
-En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (RGG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
+En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (GRG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
 \begin{itemize}
     \item Existència de camins i cicles Eulerians
     \item Existència d'arbres i boscos
@@ -74,6 +74,11 @@ En aquest projecte teníem com a objectiu la investigació de les transicions de
 
 \section{Implementació de la classe \texttt{Graph}}
 Per representar els grafs hem implementat una classe \texttt{Graph} que utilitza llistes d'adjacències donat que són més barates en memòria i la implementació d'un \texttt{Breadth First Search (BFS)} menys costosa en comparació amb les matrius d'adjacència.
+
+\begin{listing}
+\inputminted{cpp}{src/graph.h}
+\caption{Graph.h}
+\end{listing}
 
 Dins d'aquesta classe hem implementat la constructora, que inicialitza la llista d'adjacència, i també els següents mètodes:
 \begin{itemize}
@@ -85,7 +90,7 @@ Dins d'aquesta classe hem implementat la constructora, que inicialitza la llista
     \item\texttt{neighbours}: retorna una llista que conté els veïns del vèrtex.
     \item\textt{EulerianCycleAndEulerianPath}: expliquem més endavant la seva utilitat e implementació.
     \item\textt{TreeAndForest}: expliquem més endavant la seva utilitat e implementació.
-    \item\textt{hasCycles}: retorna un booleà que indica si el graf te cicles. Està implementat amb GONZACABRON COMO ESTÁ IMPLEMENTADO? ES COMO UN BFS NO?
+    \item\textt{hasCycles}: retorna un booleà que indica si el graf te cicles. Està implementat utilitzant el mètode \texttt{BFS}.
 \end{itemize}
 
 \section{Generació dels Grafs}
@@ -99,20 +104,32 @@ Per generar un Random Binomial Graph (RBG) ens hem basat en el model d'Erdős-R�
 Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
 
 \subsection{Random Geometric Graphs}
-En un Random Geometric Graph (RGG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
+En un Random Geometric Graph (GRG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
 
 \begin{align}
     \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
     \text{dist}(u,v) &= \sqrt{\left(x_v - x_u\right)^2 + \left(y_v - y_u\right)^2}
 \end{align}
 
-La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
+La creació dels GRGs la fem sota la funció \texttt{GRG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
 
 \section{Càlcul Adaptatiu}
 
 \section{Experiments}
-\subsection{Probabilitat de ser connex}
 
+\subsection{Probabilitat de ser connex}
+%Hipotesis:
+AQUI FALTA LA HIPOTESIS
+
+%Código:
+\begin{listing}
+\inputminted[firstline=99,lastline=136]{cpp}{src/graph.cpp}
+\caption{Funcion de NconnectedComponents en graph.cpp}
+\end{listing}
+
+AQUI FALTA COMENTAR EL CÓDIGO
+
+%Resultados:
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/bin_mult_2_04.pdf}
@@ -120,28 +137,124 @@ La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada 
     \label{fig:connect_04}
 \end{figure}
 
-\begin{listing}
-\inputminted{cpp}{src/graph.h}
-\caption{test}
-\end{listing}
-
 A l'hora d'analitzar els resultats i poder constatar la transició de fase hem plasmat les dades obtingudes en un gràfic on es representa la connectivitat de \texttt{BRG} per diferents valors de \textit{n} i per tota possibilitat \textit{p}. Per diferenciar millor els comportaments depenent del nombre de vèrtexs, hem fet un altre gràfic com el de la Figura 1 acotant a $p\leq$ 0.4. Finalment, per poder veure més clarament aquesta transició hem fet un altre gràfic però en aquest cas fins $p\leq$ 0.15\footnote{Binomial Random Graph $p\leq$ 0.15}, de manera que podem dir que la transició de fase es troba entre 0.01 i 0.04.
+
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/geo_mult_2_03.pdf}
-    \caption{Connectivitat de RGG per diferents valors de \textit{n}}
+    \caption{Connectivitat de GRG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
-En el cas del \texttt{RGG} hem creat dos gràfics on ambdós es representen els resultats respecte la connectivitat per a diferents valors de \textit{n} depenent de la grandària del radi \textit{r}. Però per poder definir la transició de fase, en aquest cas utilitzem el gràfic de la Figura 2 on només representem els resultats fins $r\leq$ 0.3. Finalment obtenim que la transició de fase es troba entre 0.07 i 0.11.
+En el cas del \texttt{GRG} hem creat dos gràfics on ambdós es representen els resultats respecte la connectivitat per a diferents valors de \textit{n} depenent de la grandària del radi \textit{r}. Però per poder definir la transició de fase, en aquest cas utilitzem el gràfic de la Figura 2 on només representem els resultats fins $r\leq$ 0.3. Finalment obtenim que la transició de fase es troba entre 0.07 i 0.11.
+
 
 \subsection{Mida esperada CC més gran}
+%Hipotesis:
+AQUI FALTA LA HIPOTESIS
+
+%Código: (el mismo que Probabilitat de ser connex)
+AQUI FALTA COMENTAR EL CÓDIGO
+
+%Resultados:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/BRG_midaCompConMax.pdf}
+    \caption{Mida esperada de la CC més gran de BRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/GRG_midaCompConMax.pdf}
+    \caption{Mida esperada de la CC més gran de GRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
 
 \subsection{Eulerain cycle and path}
+%Hipotesis:
+AQUI FALTA LA HIPOTESIS
+
+%Código:
+\begin{listing}
+\inputminted[firstline=71,lastline=97]{cpp}{src/graph.cpp}
+\caption{Funcion de EulerianCycleAndEulerianPath en graph.cpp}
+\end{listing}
+
+AQUI FALTA COMENTAR EL CÓDIGO
+
+%Resultados:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/BRG_eulerianCycle.pdf}
+    \caption{Eulerian Cycle de BRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/GRG_eulerianCycle.pdf}
+    \caption{Eulerian Cycle de GRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/BRG_eulerianPath.pdf}
+    \caption{Eulerian Path de BRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/GRG_eulerianPath.pdf}
+    \caption{Eulerian Path de GRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
 
 \subsection{Tree and forest}
+%Hipotesis:
+AQUI FALTA LA HIPOTESIS
 
+%Código:
+\begin{listing}
+\inputminted[firstline=27,lastline=66]{cpp}{src/graph.cpp}
+\caption{Funcion de hasCylces y TreeAndFores en graph.cpp}
+\end{listing}
+
+AQUI FALTA COMENTAR EL CÓDIGO
+
+%Resultados:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/BRG_cicle.pdf}
+    \caption{Probabilitat de tenir un cicle de BRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/GRG_cicle.pdf}
+    \caption{Probabilitat de tenir un cicle de GRG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+AQUI FALTA COMENTAR LOS RESULTADOS
 
 \section{Possibles futurs experiments}
 
