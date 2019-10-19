@@ -66,11 +66,31 @@ Albert Mercadé Plasencia\\
 \pagenumbering{arabic} 
 
 \section{Introducció}
-Per raons d'eficiència hem implementat la classe \texttt{Graph} amb llistes d'adjacència. 
+En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (RGG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
+\begin{itemize}
+    \item Existència de camins i cicles Eulerians
+    \item Existència d'arbres i boscos
+\end{itemize}
+
+\section{Implementació de la classe \texttt{Graph}}
+Per representar els grafs hem implementat una classe \texttt{Graph} que utilitza llistes d'adjacències donat que són més barates en memòria i la implementació d'un \texttt{Breadth First Search (BFS)} menys costosa en comparació amb les matrius d'adjacència.
+
+Dins d'aquesta classe hem implementat la constructora, que inicialitza la llista d'adjacència, i també els següents mètodes:
+\begin{itemize}
+    \item\texttt{addDirectedEdge}: donats els identificadors de dos vèrtexs crea una aresta dirigida entre ells.
+    \item\texttt{addUndirectedEdge}: donats els identificadors de dos vèrtexs a i b, crea una aresta no dirigida entre ells.
+    \item\texttt{NconnectedComponents}: expliquem més endavant la seva utilitat e implementació.
+    \item\texttt{is\_connected}: retorna un booleà que indica si el graf és connex. Està implementat amb un \texttt{BFS}.
+    \item\texttt{print}: imprimeix per pantalla la morfologia del graf. Utilitzat sobretot per fer tests i \textit{debugar}.
+    \item\texttt{neighbours}: retorna una llista que conté els veïns del vèrtex.
+    \item\textt{EulerianCycleAndEulerianPath}: expliquem més endavant la seva utilitat e implementació.
+    \item\textt{TreeAndForest}: expliquem més endavant la seva utilitat e implementació.
+    \item\textt{hasCycles}: retorna un booleà que indica si el graf te cicles. Està implementat amb GONZACABRON COMO ESTÁ IMPLEMENTADO? ES COMO UN BFS NO?
+\end{itemize}
 
 \section{Generació dels Grafs}
 \subsection{Random Binomial Graphs}
-Per generar un Random Binamial Graph (RBG) ens hem basat en el model d'Erdős-Rényi \cite{Erdos1960OnGraphs,Erdos1959OnI} que per un graf $G=(V,E)$ diu que
+Per generar un Random Binomial Graph (RBG) ens hem basat en el model d'Erdős-Rényi \cite{Erdos1960OnGraphs,Erdos1959OnI} que per un graf $G=(V,E)$ diu que
 
 \begin{equation}
     \forall u,v \in V,\quad (u,v) \in E \text{ amb probabilitat } p
@@ -79,31 +99,53 @@ Per generar un Random Binamial Graph (RBG) ens hem basat en el model d'Erdős-R�
 Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
 
 \subsection{Random Geometric Graphs}
-Un Random Geometric Graphs (RGG)\cite{Diaz2007On} per tot vèrtex $v \in V$ li assignem unes coordenades ($x_v, y_v$) aleatòries entre 0 i 1. Cada vèrtex 
+En un Random Geometric Graph (RGG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
 
 \begin{align}
     \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
     \text{dist}(u,v) &= \sqrt{\left(x_v - x_u\right)^2 + \left(y_v - y_u\right)^2}
 \end{align}
 
-\section{Càlcul de Components Connexos}
+La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
 
 \section{Càlcul Adaptatiu}
 
-\section{Anàlisis de Resultats}
+\section{Experiments}
+\subsection{Probabilitat de ser connex}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/bin_mult_2_04.pdf}
-    \caption{Connectivitat de BRG per diferents valors de n}
+    \caption{Connectivitat de BRG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
 \begin{listing}
 \inputminted{cpp}{src/graph.h}
 \caption{test}
-\label{lst:test}
 \end{listing}
+
+A l'hora d'analitzar els resultats i poder constatar la transició de fase hem plasmat les dades obtingudes en un gràfic on es representa la connectivitat de \texttt{BRG} per diferents valors de \textit{n} i per tota possibilitat \textit{p}. Per diferenciar millor els comportaments depenent del nombre de vèrtexs, hem fet un altre gràfic com el de la Figura 1 acotant a $p\leq$ 0.4. Finalment, per poder veure més clarament aquesta transició hem fet un altre gràfic però en aquest cas fins $p\leq$ 0.15\footnote{Binomial Random Graph $p\leq$ 0.15}, de manera que podem dir que la transició de fase es troba entre 0.01 i 0.04.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=10cm]{plots/geo_mult_2_03.pdf}
+    \caption{Connectivitat de RGG per diferents valors de \textit{n}}
+    \label{fig:connect_04}
+\end{figure}
+
+En el cas del \texttt{RGG} hem creat dos gràfics on ambdós es representen els resultats respecte la connectivitat per a diferents valors de \textit{n} depenent de la grandària del radi \textit{r}. Però per poder definir la transició de fase, en aquest cas utilitzem el gràfic de la Figura 2 on només representem els resultats fins $r\leq$ 0.3. Finalment obtenim que la transició de fase es troba entre 0.07 i 0.11.
+
+\subsection{Mida esperada CC més gran}
+
+\subsection{Eulerain cycle and path}
+
+\subsection{Tree and forest}
+
+
+\section{Possibles futurs experiments}
+
+\section{Conclusions}
 
 \pagebreak
 
