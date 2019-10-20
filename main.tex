@@ -67,10 +67,13 @@ Albert Mercadé Plasencia\\
 
 \section{Introducció}
 En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (GRG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
+
 \begin{itemize}
     \item Existència de camins i cicles Eulerians
     \item Existència d'arbres i boscos
 \end{itemize}
+
+
 
 \section{Implementació de la classe \texttt{Graph}}
 Per representar els grafs hem implementat una classe \texttt{Graph} que utilitza llistes d'adjacències donat que són més barates en memòria i la implementació d'un \texttt{Breadth First Search (BFS)} menys costosa en comparació amb les matrius d'adjacència.
@@ -124,10 +127,10 @@ AQUI FALTA LA HIPOTESIS
 %Código:
 \begin{listing}
 \inputminted[firstline=99,lastline=136]{cpp}{src/graph.cpp}
-\caption{Funcion de NconnectedComponents en graph.cpp}
+\caption{Funció de NconnectedComponents a graph.cpp}
 \end{listing}
 
-AQUI FALTA COMENTAR EL CÓDIGO
+Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc}) té el \texttt{Random Graph} generat, hem escrit la funció NconnectedComponents a graph.cpp, la qual mitjançant l'algoritme de cerca \texttt{BFS} analitza el gràfic en busca de \textit{cc}. Com es veu en el codi, primerament s'inicialitza un vector de booleans per saber quins vèrtexs ja han estat visitats. Començant pel primer vèrtex i amb l'ajuda d'una cua, es recorren els vèrtexs adjacents no visitats encara mentre s'afegeixen a la cua els veïns d'aquests.Durant la recerca, es manté un comptador de \textit{cc} trobades, la grandària de la \textit{cc} que s'esta analitzant en aquell moment i la mida de la més gran del gràfic. Finalment retorna un \textit{pair} amb la quantitat de \textit{cc} que hi ha i la mida de la major.
 
 %Resultados:
 \begin{figure}[H]
@@ -165,7 +168,7 @@ AQUI FALTA COMENTAR EL CÓDIGO
     \label{fig:connect_04}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+Amb els resultats obtinguts podríem dir amb certa seguretat que la nostra hipòtesi es certa/falsa. Es pot veure clarament una transició de fase propera a \textit{p=}0.05, la qual era en certa mida previsible després dels resultats de la connectivitat de \texttt{BRG} per a diferents valors de \textit{n}, ja que la mida d'una component connexa gegant és inversament proporcional a la quantitat de components connexes. Aqui ns si me acabo de flipar.
 
 \begin{figure}[H]
     \centering
@@ -176,17 +179,17 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 
 AQUI FALTA COMENTAR LOS RESULTADOS
 
-\subsection{Eulerain cycle and path}
+\subsection{Camí i cicle Eulerià}
 %Hipotesis:
 AQUI FALTA LA HIPOTESIS
 
 %Código:
 \begin{listing}
 \inputminted[firstline=71,lastline=97]{cpp}{src/graph.cpp}
-\caption{Funcion de EulerianCycleAndEulerianPath en graph.cpp}
+\caption{Funció de EulerianCycleAndEulerianPath en graph.cpp}
 \end{listing}
 
-AQUI FALTA COMENTAR EL CÓDIGO
+Per determinar si un graf té un cicle eulerià o un camí eulerià hem creat la funció \textit{EulerianCycleAndEulerianPath}. Primerament utilitzant la funció \textit{NconnectedComponents} comprova que tots el vèrtex amb grau \textit{g > 0} pertanyen a una única Component Conexa, si és el cas simplement mirant el nombre de vèrtex amb grau imparell podem classificar si tenen un camí (dos vèrtex imparells) o si tenen un cicle, i per tant també un camí (cap vèrtex imparell).
 
 %Resultados:
 \begin{figure}[H]
@@ -225,14 +228,14 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 
 AQUI FALTA COMENTAR LOS RESULTADOS
 
-\subsection{Tree and forest}
+\subsection{Arbres i boscos}
 %Hipotesis:
 AQUI FALTA LA HIPOTESIS
 
 %Código:
 \begin{listing}
 \inputminted[firstline=27,lastline=66]{cpp}{src/graph.cpp}
-\caption{Funcion de hasCylces y TreeAndFores en graph.cpp}
+\caption{Funció de hasCylces Funció TreeAndForest en graph.cpp}
 \end{listing}
 
 AQUI FALTA COMENTAR EL CÓDIGO
@@ -257,6 +260,8 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 AQUI FALTA COMENTAR LOS RESULTADOS
 
 \section{Possibles futurs experiments}
+Com a possibles experiments que finalment no hem pogut investigar havíem pensat en veure si hi ha transició de fase en la probabilitat de que hi hagi un camí o cicle Hamiltonià. A més també hem considerat indagar la existència de transició de fase de que els grafs siguin bipartits.
+
 
 \section{Conclusions}
 
