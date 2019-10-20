@@ -66,11 +66,11 @@ Albert Mercadé Plasencia\\
 \pagenumbering{arabic} 
 
 \section{Introducció}
-En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (GRG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
+En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (RBG) i Random Geometric Graph (RGG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
 
 \begin{itemize}
-    \item Existència de camins i cicles Eulerians
-    \item Existència d'arbres i boscos
+    \item Existència de camins i cicles Eulerians.
+    \item Existència de cicles.
 \end{itemize}
 
 
@@ -85,16 +85,18 @@ Per representar els grafs hem implementat una classe \texttt{Graph} que utilitza
 
 Dins d'aquesta classe hem implementat la constructora, que inicialitza la llista d'adjacència, i també els següents mètodes:
 \begin{itemize}
-    \item\texttt{addDirectedEdge}: donats els identificadors de dos vèrtexs crea una aresta dirigida entre ells.
     \item\texttt{addUndirectedEdge}: donats els identificadors de dos vèrtexs a i b, crea una aresta no dirigida entre ells.
-    \item\texttt{NconnectedComponents}: expliquem més endavant la seva utilitat e implementació.
-    \item\texttt{is\_connected}: retorna un booleà que indica si el graf és connex. Està implementat amb un \texttt{BFS}.
-    \item\texttt{print}: imprimeix per pantalla la morfologia del graf. Utilitzat sobretot per fer tests i \textit{debugar}.
-    \item\texttt{neighbours}: retorna una llista que conté els veïns del vèrtex.
-    \item\textt{EulerianCycleAndEulerianPath}: expliquem més endavant la seva utilitat e implementació.
-    \item\textt{TreeAndForest}: expliquem més endavant la seva utilitat e implementació.
+    \item\texttt{addDirectedEdge}: donats els identificadors de dos vèrtexs crea una aresta dirigida entre ells.
     \item\textt{hasCycles}: retorna un booleà que indica si el graf te cicles. Està implementat utilitzant el mètode \texttt{BFS}.
+    \item\textt{EulerianCycleAndEulerianPath}: expliquem més endavant la seva utilitat e implementació.
+    \item\texttt{ConnectedComponents}: expliquem més endavant la seva utilitat e implementació.
+    \item\texttt{isConnected}: retorna un booleà que indica si el graf és connex. Està implementat amb un \texttt{BFS}.
+    \item\texttt{neighbours}: retorna una llista que conté els veïns del vèrtex.
+    \item\texttt{print}: imprimeix per pantalla la morfologia del graf. Utilitzat sobretot per fer tests i \textit{debugar}.
 \end{itemize}
+
+% ahora el hasCycles quizas hay que poner que lo explicamos luego no? Supongo no se si hace falta meter lo de lo explicamos luego en todos o lo metemos en general. Como quede mas limpio 
+% jajaja okay yo haria esto:
 
 \section{Generació dels Grafs}
 \subsection{Random Binomial Graphs}
@@ -104,33 +106,46 @@ Per generar un Random Binomial Graph (RBG) ens hem basat en el model d'Erdős-R�
     \forall u,v \in V,\quad (u,v) \in E \text{ amb probabilitat } p
 \end{equation}
 
-Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
+Hem implementat l'algoritme prèviament descrit sota la funció \texttt{RBG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
 
 \subsection{Random Geometric Graphs}
-En un Random Geometric Graph (GRG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
+En un Random Geometric Graph (RGG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
 
 \begin{align}
     \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
     \text{dist}(u,v) &= \sqrt{\left(x_v - x_u\right)^2 + \left(y_v - y_u\right)^2}
 \end{align}
 
-La creació dels GRGs la fem sota la funció \texttt{GRG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
+La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
 
 \section{Càlcul Adaptatiu}
 
-\section{Experiments}
+Per fer les gràfiques, vam repetir cada experiment 500 vegades fent la mitjana per a cada valor de $p$ o $r$.
 
+Al fer les primeres gràfiques ens vam adonar que la gran majoria de punts eren o bé 0, o 1 i la zona de transició de fase
+era sovint en un interval molt petit. Per tal d'evitar calcular punts innecessaris al fer les gràfiques però tenir una
+bona resolució en l'interval en que es produïa el canvi de fase, vam decidir implementar un mètode de \emph{sampling}
+adaptatiu. \footnote{Implementat a src/adaptative_calc.cpp}
+
+El mètode utilitzat consisteix en dividir els valors de 0 a 1 en 11 punts (0, 0.1, 0.2 ...) i calcular per a cada un dels
+punts la mitjana de les 500 repeticions. Un cop feta la primera pasada, mirem si hi ha dos valors consecutis en que la
+diferència es maj
+
+\section{Experiments}
 \subsection{Probabilitat de ser connex}
 %Hipotesis:
-AQUI FALTA LA HIPOTESIS
+En aquest primer experiment la nostra hipòtesi és que sí que trobarem una transició de fase en ambdós casos. En el cas del \texttt{BRG} a mesura que augmenta la probabilitat \emph{p} de que existeixin arestes entre els vèrtex té una certa lògica que augmenti també la probabilitat de ser connex. D'altra banda, en el cas del \textt{RGG}
+
 
 %Código:
 \begin{listing}
-\inputminted[firstline=99,lastline=136]{cpp}{src/graph.cpp}
-\caption{Funció de NconnectedComponents a graph.cpp}
+\inputminted[firstline=83,lastline=122]{cpp}{src/graph.cpp}
+\caption{Funció de ConnectedComponents a graph.cpp}
 \end{listing}
 
-Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc}) té el \texttt{Random Graph} generat, hem escrit la funció NconnectedComponents a graph.cpp, la qual mitjançant l'algoritme de cerca \texttt{BFS} analitza el gràfic en busca de \textit{cc}. Com es veu en el codi, primerament s'inicialitza un vector de booleans per saber quins vèrtexs ja han estat visitats. Començant pel primer vèrtex i amb l'ajuda d'una cua, es recorren els vèrtexs adjacents no visitats encara mentre s'afegeixen a la cua els veïns d'aquests.Durant la recerca, es manté un comptador de \textit{cc} trobades, la grandària de la \textit{cc} que s'esta analitzant en aquell moment i la mida de la més gran del gràfic. Finalment retorna un \textit{pair} amb la quantitat de \textit{cc} que hi ha i la mida de la major.
+Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc}) té el \texttt{Random Graph} generat, hem escrit la funció ConnectedComponents a graph.cpp, la qual mitjançant l'algoritme de cerca \texttt{BFS} analitza el gràfic en busca de \textit{cc}. Com es veu en el codi, primerament s'inicialitza un vector de booleans per saber quins vèrtexs ja han estat visitats. Començant pel primer vèrtex i amb l'ajuda d'una cua, es recorren els vèrtexs adjacents no visitats encara mentre s'afegeixen a la cua els veïns d'aquests. Durant la cerca, es manté un comptador de \textit{cc} trobades que s'augmenta quan ja s'han visitat tots els vèrtex de la \textit{cc} actual. Un cop la cua ja està buida, és a dir, no hi ha més vèrtexs de la \textit{cc} per visitar, es busca el següent vèrtex no visitat per analitzar una nova component. Finalment retorna un \textit{pair} amb la quantitat de \textit{cc} que hi ha i la mida de la major.
+
+%hola aqui explicas lo de "la grandària de la \textit{cc} que s'esta analitzant en aquell moment i la mida de la més gran del gràfic" que esto seria en CC més gran, borralo
 
 %Resultados:
 \begin{figure}[H]
@@ -146,19 +161,19 @@ A l'hora d'analitzar els resultats i poder constatar la transició de fase hem p
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/geo_mult_2_03.pdf}
-    \caption{Connectivitat de GRG per diferents valors de \textit{n}}
+    \caption{Connectivitat de RGG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
-En el cas del \texttt{GRG} hem creat dos gràfics on ambdós es representen els resultats respecte la connectivitat per a diferents valors de \textit{n} depenent de la grandària del radi \textit{r}. Però per poder definir la transició de fase, en aquest cas utilitzem el gràfic de la Figura 2 on només representem els resultats fins $r\leq$ 0.3. Finalment obtenim que la transició de fase es troba entre 0.07 i 0.11.
+En el cas del \texttt{RGG} hem creat dos gràfics on ambdós es representen els resultats respecte la connectivitat per a diferents valors de \textit{n} depenent de la grandària del radi \textit{r}. Però per poder definir la transició de fase, en aquest cas utilitzem el gràfic de la Figura 2 on només representem els resultats fins $r\leq$ 0.3. Finalment obtenim que la transició de fase es troba entre 0.07 i 0.11.
 
 
 \subsection{Mida esperada CC més gran}
 %Hipotesis:
-AQUI FALTA LA HIPOTESIS
+Per aquest experiment, pels mateixos motius que la connectivitat i sabent que estàvem en lo cert, vam pensar que seria coherent que la mida esperada de la CC més gran també tingués transició de fase, tant en BRG com en RGG.
 
 %Código: (el mismo que Probabilitat de ser connex)
-AQUI FALTA COMENTAR EL CÓDIGO
+El codi que hem utilitzat en aquest cas ha sigut el mateix que per la probabilitat de ser connex mostrat més amunt en el \textit{Listing 2}, pero hem afegit dues variables (per tal de comprovar quina component era la més gran.
 
 %Resultados:
 \begin{figure}[H]
@@ -168,16 +183,16 @@ AQUI FALTA COMENTAR EL CÓDIGO
     \label{fig:connect_04}
 \end{figure}
 
-Amb els resultats obtinguts podríem dir amb certa seguretat que la nostra hipòtesi es certa/falsa. Es pot veure clarament una transició de fase propera a \textit{p=}0.05, la qual era en certa mida previsible després dels resultats de la connectivitat de \texttt{BRG} per a diferents valors de \textit{n}, ja que la mida d'una component connexa gegant és inversament proporcional a la quantitat de components connexes. Aqui ns si me acabo de flipar.
+Amb els resultats obtinguts es pot veure clarament una transició de fase propera a \textit{p=}0.05, la qual era en certa mida previsible després dels resultats de la connectivitat de \texttt{BRG} per a diferents valors de \textit{n}, ja que la mida d'una component connexa gegant és inversament proporcional a la quantitat de components connexes. %AQUI NS SI ME ACABO DE FLIPAR.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_midaCompConMax.pdf}
-    \caption{Mida esperada de la CC més gran de GRG per diferents valors de \textit{n}}
+    \caption{Mida esperada de la CC més gran de RGG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+En el cas de \texttt{RGG} els resultats representats ens ajuden a veure una transició de fase ben marcada a \textit{p=0.1} la qual correspon a la obtinguda en el anàlisi de la connectivitat de \texttt{RGG} per diferents valors de \textit{n}. Com esmentat anteriorment, aquests resultats venen justificats pel fet de la proporcionalitat inversa entre el nombre de \textit{cc} i la mida de la component connexa gegant. Igual que antes, ns si me he flipado.
 
 \subsection{Camí i cicle Eulerià}
 %Hipotesis:
@@ -185,11 +200,12 @@ AQUI FALTA LA HIPOTESIS
 
 %Código:
 \begin{listing}
-\inputminted[firstline=71,lastline=97]{cpp}{src/graph.cpp}
+\inputminted[firstline=8,lastline=8]{cpp}{src/graph.h}
+\inputminted[firstline=60,lastline=81]{cpp}{src/graph.cpp}
 \caption{Funció de EulerianCycleAndEulerianPath en graph.cpp}
 \end{listing}
 
-Per determinar si un graf té un cicle eulerià o un camí eulerià hem creat la funció \textit{EulerianCycleAndEulerianPath}. Primerament utilitzant la funció \textit{NconnectedComponents} comprova que tots el vèrtex amb grau \textit{g > 0} pertanyen a una única Component Conexa, si és el cas simplement mirant el nombre de vèrtex amb grau imparell podem classificar si tenen un camí (dos vèrtex imparells) o si tenen un cicle, i per tant també un camí (cap vèrtex imparell).
+Per determinar si un graf té un cicle eulerià o un camí eulerià hem creat la funció \textit{EulerianCycleAndEulerianPath}. Primerament utilitzant la funció \textit{ConnectedComponents} comprova que tots el vèrtex amb grau \textit{g > 0} pertanyen a una única Component Connexa, si és el cas simplement mirant el nombre de vèrtex amb grau imparell podem classificar si tenen un camí (dos vèrtex imparells) o si tenen un cicle, i per tant també un camí (cap vèrtex imparell).
 
 %Resultados:
 \begin{figure}[H]
@@ -204,7 +220,7 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_eulerianCycle.pdf}
-    \caption{Eulerian Cycle de GRG per diferents valors de \textit{n}}
+    \caption{Eulerian Cycle de RGG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
@@ -222,7 +238,7 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_eulerianPath.pdf}
-    \caption{Eulerian Path de GRG per diferents valors de \textit{n}}
+    \caption{Eulerian Path de RGG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
@@ -234,7 +250,7 @@ AQUI FALTA LA HIPOTESIS
 
 %Código:
 \begin{listing}
-\inputminted[firstline=27,lastline=66]{cpp}{src/graph.cpp}
+\inputminted[firstline=27,lastline=57]{cpp}{src/graph.cpp}
 \caption{Funció de hasCylces Funció TreeAndForest en graph.cpp}
 \end{listing}
 
@@ -253,7 +269,7 @@ AQUI FALTA COMENTAR LOS RESULTADOS
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_cicle.pdf}
-    \caption{Probabilitat de tenir un cicle de GRG per diferents valors de \textit{n}}
+    \caption{Probabilitat de tenir un cicle de RGG per diferents valors de \textit{n}}
     \label{fig:connect_04}
 \end{figure}
 
