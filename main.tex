@@ -2,6 +2,12 @@
 
 \input{preamble}
 
+\usepackage[htt]{hyphenat}
+\usepackage{xspace}
+
+\newcommand{\BRG}{\texttt{BRG}\xspace}
+\newcommand{\RGG}{\texttt{RGG}\xspace}
+
 \setminted{
 frame=lines,
 framesep=2mm,
@@ -10,14 +16,15 @@ fontsize=\footnotesize,
 linenos
 }
 
+
 %\addbibresource{Projecte_A.bib}
 %\usepackage{graphicx}
 
 \title{Projecte A - Grafs}
 \author{
 Aleix Boné Ribó\\
-Alex Herrero Pons\\
 Alex González Godoy\\
+Alex Herrero Pons\\
 Albert Mercadé Plasencia\\
 }
 \date{Setembre 2019}
@@ -68,17 +75,19 @@ Albert Mercadé Plasencia\\
 \section{Introducció}
 %\begin{abstract}
 
-En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (BRG) i Random Geometric Graph (RGG). La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
+En aquest projecte teníem com a objectiu la investigació de les transicions de fase en algunes propietats dels models de grafs aleatoris Random Binomial Graph (\BRG) i Random Geometric Graph (\RGG). 
+La connectivitat d'aquests models de grafs és la primera propietat que se'ns demanava explorar, a més, també se'ns requeria indagar sobre la mida esperada de la component connexa més gran al graf. 
+En quant a les propietats extres que nosaltres em escollit per ampliar la nostra investigació, ens hem decantat per:
 
 \begin{itemize}
     \item Existència de camins i cicles Eulerians.
-    \item Existència de cicles.
+    \item Existència de cicles (Si el graf és o no un bosc).
 \end{itemize}
 
+Tant en les dos propietats demanades a l'enunciat com a les proposades per nosaltres hem trobat de transicions de fase. També hem investigat la transició de fase en l'existència d'arbres, però la probabilitat de que el graf generat sigues un
+arbre era tant baixa en \BRG i \RGG que no es podia apreciar transició de fase (era pràcticament 0 en tots els casos).
+
 %\end{abstract}
-
-
-
 
 \section{Implementació de la classe \texttt{Graph}}
 Per representar els grafs hem implementat una classe \texttt{Graph}\footnote{Implementat a src/graph.cpp} que utilitza llistes d'adjacències donat que són més barates en memòria i la implementació d'un \texttt{Breadth First Search (BFS)} menys costosa en comparació amb les matrius d'adjacència.
@@ -105,23 +114,26 @@ Dins d'aquesta classe hem implementat la constructora, que inicialitza la llista
 
 \section{Generació dels Grafs}
 \subsection{Random Binomial Graphs}
-Per generar un Random Binomial Graph (BRG) ens hem basat en el model d'Erdős-Rényi \cite{Erdos1960OnGraphs,Erdos1959OnI} que per un graf $G=(V,E)$ diu que
+Per generar un Random Binomial Graph (\BRG) ens hem basat en el model d'Erdős-Rényi \cite{Erdos1960OnGraphs,Erdos1959OnI} que per un graf $G=(V,E)$ diu que
 
-\begin{equation}
+\begin{equation}\label{eq:erdos}
     \forall u,v \in V,\quad (u,v) \in E \text{ amb probabilitat } p
 \end{equation}
 
-Hem implementat l'algoritme prèviament descrit sota la funció \texttt{BRG}\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli amb probabilitat $p$ decidim quines afegim i quines no.
+Hem implementat l'algoritme prèviament descrit sota la funció \BRG\footnote{Implementada a src/graph\_generator.cpp}. Per cada vèrtex veiem totes les possible arestes i seguint una distribució de Bernoulli (\texttt{bernoulli\_distribution}\cite{Bernoulli_distributionReference}) amb probabilitat $p$ decidim quines afegim i quines no.
 
 \subsection{Random Geometric Graphs}
-En un Random Geometric Graph (RGG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades ($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si
+En un Random Geometric Graph (\RGG)\cite{Diaz2007On} per a tot vèrtex $v \in V$ se li assigna unes coordenades 
+($x_v, y_v$) aleatòries entre 0.0 i 1.0 i les arestes entre dos vèrtex s'afageixen si la distancia euclidiana
+entre les coordenades assignades als vèrtex es menor a $r$, tal com es descriu a l'equació \ref{eq:RGG}:
 
-\begin{align}
-    \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \\
+\begin{align} \label{eq:RGG}
+    \forall u,v \in V,\quad (u,v) \in E \Longleftrightarrow \text{dist}(u,v) &\leq r \nonumber \\
     \text{dist}(u,v) &= \sqrt{\left(x_v - x_u\right)^2 + \left(y_v - y_u\right)^2}
 \end{align}
 
-La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}. Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
+La creació dels {\RGG}s la fem sota la funció \RGG\footnote{Implementada a src/graph\_generator.cpp}, on assignem a cada vèrtex unes coordenades aleatòries amb una \texttt{uniform\_real\_distribution}\cite{Uniform_real_distributionReference}.
+Després per cada vèrtex iterem la resta i afegim una aresta quan la distància entre els dos vèrtex és menor o igual que el radi \textit{r}.
 
 \section{Comput de dades i generació de gràfiques}
 
@@ -129,8 +141,10 @@ La creació dels RGGs la fem sota la funció \texttt{RGG}\footnote{Implementada 
 
 Al fer les primeres gràfiques ens vam adonar que la gran majoria de punts eren o bé 0, o 1 i la zona de transició de fase
 era sovint en un interval molt petit. Per tal d'evitar calcular punts innecessaris al fer les gràfiques però tenir una
-bona resolució a l'interval en que es produïa la transició de fase van decidir implementar un mètode de \emp{sampling}
-adaptatiu. \footnote{Implementat a src/adaptative\_calc.cpp}
+bona resolució a l'interval en que es produïa la transició de fase van decidir implementar un mètode de \emph{sampling}
+adaptatiu\cite{AdaptivePlotting}\footnote{Implementat a src/adaptative\_calc.cpp}.
+
+
 
 El mètode utilitzat consisteix en dividir els valors de 0 a 1 en 11 punts (0, 0.1, 0.2 ...) i calcular per a cada un dels
 punts la mitjana de les 500 repeticions. Un cop feta la primera passada, mirem si hi ha dos valors consecutius en que la
@@ -139,7 +153,7 @@ sigui menor $dy$ o s'arribi al limit de la recursivitat. Aquest mètode permet o
 transició de fase de manera clara sense haver de computar punts innecessaris del gràfic a les zones planes. Ajustant el valor de $dy$ podem decidir la resolució de la gràfica resultant.
 
 Un cop compilat el programa (amb \texttt{make}), la binària \texttt{main} dins de \emph{bin} calcula utilitzant 
-el mètode descrit les dades per les diferents propietats que estudiarem. Es crida de la seguent manera:
+el mètode descrit les dades per les diferents propietats que estudiarem. Es crida de la següent manera:
 
 \begin{verbatim}
 ./bin/main tipus_graph propietat N repeticions dy
@@ -148,7 +162,7 @@ el mètode descrit les dades per les diferents propietats que estudiarem. Es cri
 Descripció dels paràmetres:
 
 \begin{itemize}
-    \item  \texttt{tipus\_graph} es el tipus de graf aleatori (\texttt{BRG} o \texttt{GRG})
+    \item  \texttt{tipus\_graph} es el tipus de graf aleatori (\BRG o \RGG)
     \item  \texttt{propietat} es la propietat a calcular (cicle, esConnex, eulerianCycle, eulerianPath, midaCompConMax, numCompCon)
     \item  \texttt{N} es la mida del graf
     \item  \texttt{repeticions} es el nombre de repeticions per cada punt (vam utilitzar 500)
@@ -165,16 +179,16 @@ L'\emph{script} de bash \emph{makePlots.sh} automatitza tot el proces de calcul 
 \section{Experiments}
 \subsection{Probabilitat de ser connex}
 %Hipotesis:
-En aquest primer experiment la nostra hipòtesi és que sí que trobarem una transició de fase en ambdós casos. En el cas del BRG a mesura que augmenta la probabilitat \emph{p} de que existeixin arestes entre els vèrtex té una certa lògica que augmenti també la probabilitat de ser connex. D'altra banda, en el cas del RGG com més gran és \emph{r} més arestes tindrà cada vèrtex i per tant més alta la probabilitat de que el graf sigui connex.
-
+En aquest primer experiment la nostra hipòtesi és que sí que trobarem una transició de fase en ambdós casos. En el cas del \BRG a mesura que augmenta la probabilitat \emph{p} de que existeixin arestes entre els vèrtex té una certa lògica que augmenti també la probabilitat de ser connex. D'altra banda, en el cas del \RGG com més gran és \emph{r} més arestes tindrà cada vèrtex i per tant més alta la probabilitat de que el graf sigui connex.
 
 %Código:
 \begin{listing}
 \inputminted[firstline=83,lastline=122]{cpp}{src/graph.cpp}
 \caption{Funció de ConnectedComponents a graph.cpp}
+\label{listing:conComp}
 \end{listing}
 
-Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc}) té el \texttt{Random Graph} generat, hem escrit la funció ConnectedComponents\footnote{Implementat a src/graph.cpp}, la qual mitjançant l'algoritme de cerca \texttt{BFS} analitza el gràfic en busca de \textit{cc}. Com es veu en el codi, primerament s'inicialitza un vector de booleans per saber quins vèrtexs ja han estat visitats. Començant pel primer vèrtex i amb l'ajuda d'una cua, es recorren els vèrtexs adjacents no visitats encara mentre s'afegeixen a la cua els veïns d'aquests. Durant la cerca, es manté un comptador de \textit{cc} trobades que s'augmenta quan ja s'han visitat tots els vèrtex de la \textit{cc} actual i encara hi ha veïns per visitar. Un cop la cua ja està buida, és a dir, no hi ha més vèrtexs de la \textit{cc} per visitar, es busca el següent vèrtex no visitat per analitzar una nova component. Finalment retorna un \textit{pair} amb la quantitat de \textit{cc} que hi ha i la mida de la major.
+Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc}) té el \texttt{Random Graph} generat, hem escrit la funció \texttt{ConnectedComponents}, la qual mitjançant l'algoritme de cerca \texttt{BFS} analitza el gràfic en busca de \textit{cc}. Com es veu en el codi, primerament s'inicialitza un vector de booleans per saber quins vèrtexs ja han estat visitats. Començant pel primer vèrtex i amb l'ajuda d'una cua, es recorren els vèrtexs adjacents no visitats encara mentre s'afegeixen a la cua els veïns d'aquests. Durant la cerca, es manté un comptador de \textit{cc} trobades que s'augmenta quan ja s'han visitat tots els vèrtex de la \textit{cc} actual i encara hi ha veïns per visitar. Un cop la cua ja està buida, és a dir, no hi ha més vèrtexs de la \textit{cc} per visitar, es busca el següent vèrtex no visitat per analitzar una nova component. Finalment retorna un \textit{pair} amb la quantitat de \textit{cc} que hi ha i la mida de la major.
 
 %hola aqui explicas lo de "la grandària de la \textit{cc} que s'esta analitzant en aquell moment i la mida de la més gran del gràfic" que esto seria en CC més gran, borralo
 
@@ -184,52 +198,52 @@ Per poder comprovar la hipòtesi i saber quantes components connexes (\textit{cc
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/BRG_esConnex.pdf}
-    \caption{Connectivitat de BRG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Connectivitat de \BRG per diferents valors de \textit{n}}
+    \label{fig:connect_BRG}
 \end{figure}
 
-A l'hora d'analitzar els resultats i poder constatar la transició de fase hem plasmat les dades obtingudes en un gràfic on es representa la probabilitat de ser connex de \texttt{BRG} per diferents valors de \textit{n} i per tota possibilitat \textit{p}. A la Figura 1 es pot apreciar una transició de fase més marcada per valors elevats de \emph{N} a probabilitat de \textit{p} propera a 0.05.
+A l'hora d'analitzar els resultats i poder constatar la transició de fase hem plasmat les dades obtingudes en un gràfic on es representa la probabilitat de ser connex de \BRG per diferents valors de \textit{n} i per tota possibilitat \textit{p}. A la Figura \ref{fig:connect_BRG} es pot apreciar una transició de fase més marcada per valors elevats de \emph{N} a probabilitat de \textit{p} propera a 0.05.
 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_esConnex.pdf}
-    \caption{Connectivitat de RGG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Connectivitat de \RGG per diferents valors de \textit{n}}
+    \label{fig:connect_RRG}
 \end{figure}
 
-En el cas del \texttt{RGG}, com es pot veure a la Figura 2, representem la probabilitat de que el graf sigui connex respecte el radi \emph{r} per a varis valors de \emph{N}. En aquest cas també apreciem una transició de fase bastant clara que confirma la nostra hipòtesis. A més, semblant al cas del \texttt{BRG}, veiem que la transició és més lenta a mesura que el valor de \emph{N} augmenta. Té sentit que sigui així donat que quants més vèrtex hi han al graf més fàcil és que que hi hagin arestes entre ells connectant-los. En el cas de $N=150$ la transició succeeix molt ràpidament entre els valors de 0.1 i 0.17 de \emph{r}. En canvi per $N=10$ la transició ocorre entre $r=0.25$ i $r=0.6$.
+En el cas del \RGG, com es pot veure a la Figura \ref{fig:connect_RRG}, representem la probabilitat de que el graf sigui connex respecte el radi \emph{r} per a varis valors de \emph{N}. En aquest cas també apreciem una transició de fase bastant clara que confirma la nostra hipòtesis. A més, semblant al cas del \BRG, veiem que la transició és més lenta a mesura que el valor de \emph{N} augmenta. Té sentit que sigui així donat que quants més vèrtex hi han al graf més fàcil és que que hi hagin arestes entre ells connectant-los. En el cas de $N=150$ la transició succeeix molt ràpidament entre els valors de 0.1 i 0.17 de \emph{r}. En canvi per $N=10$ la transició ocorre entre $r=0.25$ i $r=0.6$.
 
 
 \subsection{Mida esperada CC més gran}
 %Hipotesis:
-Per aquest experiment, pels mateixos motius que la connectivitat i ja havent confirmat que era l'existència de la transició, vam pensar que seria coherent que la mida esperada de la CC més gran també tingués transició de fase, tant en BRG com en RGG.
+Per aquest experiment, pels mateixos motius que la connectivitat i ja havent confirmat que era l'existència de la transició, vam pensar que seria coherent que la mida esperada de la CC més gran també tingués transició de fase, tant en \BRG com en \RGG.
 
 %Código: (el mismo que Probabilitat de ser connex)
-El codi que hem utilitzat en aquest cas ha sigut el mateix que per la probabilitat de ser connex mostrat més amunt en el Listing 2, però hem afegit dues variables (\textit{size}, \textit{max}) per tal de comprovar quina component és la més gran.
+El codi que hem utilitzat en aquest cas ha sigut el mateix que per la probabilitat de ser connex mostrat més amunt en el Listing \ref{listing:conComp}, però hem afegit dues variables (\textit{size}, \textit{max}) per tal de comprovar quina component és la més gran.
 
 %Resultados:
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/BRG_midaCompConMax.pdf}
-    \caption{Mida esperada de la CC més gran de BRG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Mida esperada de la CC més gran de \BRG per diferents valors de \textit{n}}
+    \label{fig:BRG_midaCompConMax}
 \end{figure}
 
-Amb els resultats obtinguts es pot veure clarament una transició de fase propera a \textit{p=}0.05, la qual era en certa mida previsible després dels resultats de la connectivitat de \texttt{BRG} per a diferents valors de \textit{n}, ja que la mida d'una component connexa gegant és inversament proporcional a la quantitat de components connexes. %AQUI NS SI ME ACABO DE FLIPAR. pues si, pero tiene sentido
+Amb els resultats obtinguts es pot veure clarament una transició de fase propera a \textit{p=}0.05, la qual era en certa mida previsible després dels resultats de la connectivitat de \BRG per a diferents valors de \textit{n}, ja que la mida d'una component connexa gegant és inversament proporcional a la quantitat de components connexes. %AQUI NS SI ME ACABO DE FLIPAR. pues si, pero tiene sentido
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_midaCompConMax.pdf}
-    \caption{Mida esperada de la CC més gran de RGG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Mida esperada de la CC més gran de \RGG per diferents valors de \textit{n}}
+    \label{fig:GRG_midaCompConMax}
 \end{figure}
 
-En el cas de \texttt{RGG} els resultats representats ens ajuden a veure una transició de fase ben marcada a \textit{p=0.1} la qual correspon a la obtinguda en el anàlisi de la connectivitat de \texttt{RGG} per diferents valors de \textit{n}. Com esmentat anteriorment, aquests resultats venen justificats pel fet de la proporcionalitat inversa entre el nombre de \textit{cc} i la mida de la component connexa gegant. %Igual que antes, ns si me he flipado.
+En el cas de \RGG els resultats representats ens ajuden a veure una transició de fase ben marcada a \textit{p=0.1} la qual correspon a la obtinguda en el anàlisi de la connectivitat de \RGG per diferents valors de \textit{n}. Com esmentat anteriorment, aquests resultats venen justificats pel fet de la proporcionalitat inversa entre el nombre de \textit{cc} i la mida de la component connexa gegant. %Igual que antes, ns si me he flipado.
 
 \subsection{Camí i cicle Eulerià}
 %Hipotesis:
-En aquest tercer experiment hem volgut comprobar si la probabilitat de tenir un camí o un cicle Eulerià tindría transició de fase. Vam escollir aquesta propietat perque ens semblava més arbitrària i que per tant no tindría transició de fase.
+En aquest tercer experiment hem volgut comprovar si la probabilitat de tenir un camí o un cicle Eulerià tindria transició de fase. Un camí Eulerià és aquell que recorre totes les arestes del graf passant només un cop per cadascuna d'elles. El cicle Eulerià vindria a ser un camí Eulerià que a més comença i acaba al mateix vèrtex. Vam escollir aquesta propietat perquè ens semblava més arbitrària i que per tant no tindria transició de fase.
 
 %Código:
 \begin{listing}
@@ -238,78 +252,83 @@ En aquest tercer experiment hem volgut comprobar si la probabilitat de tenir un 
 \caption{Funció de EulerianCycleAndEulerianPath en graph.cpp}
 \end{listing}
 
-Per determinar si un graf té un cicle Eulerià o un camí Eulerià hem creat la funció \textttt{EulerianCycleAndEulerianPath}\footnote{Implementada a src/graph.cpp}. Primerament utilitzant la funció \textttt{ConnectedComponents} comprova que tots el vèrtex amb grau \textit{g > 0} pertanyen a una única Component Connexa, si és el cas simplement mirant el nombre de vèrtexs amb grau imparell podem classificar si tenen un camí (dos vèrtexs imparells) o si tenen un cicle, i per tant també un camí (cap vèrtex imparell).
+Per determinar si un graf té un cicle Eulerià o un camí Eulerià hem creat la funció \texttt{EulerianCycleAndEulerianPath}. Primerament utilitzant la funció \texttt{ConnectedComponents} comprova que tots el vèrtex amb grau \textit{g > 0} pertanyen a una única Component Connexa, si és el cas simplement mirant el nombre de vèrtexs amb grau imparell podem classificar si tenen un camí (dos vèrtexs imparells) o si tenen un cicle, i per tant també un camí (cap vèrtex imparell).
 
 %Resultados:
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/BRG_eulerianCycle.pdf}
-    \caption{Eulerian Cycle de BRG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Eulerian Cycle de \BRG per diferents valors de \textit{n}}
+    \label{fig:eu_cycle_BRG}
 \end{figure}
 
-Com es pot veure a la Figura 5, es podria considerar l'existència d'una transició de fase per valors de \textit{p} propers a 0 ja que en aquell moment tot vèrtex amb $g=0$ es considera cicle Eulerià. Però la probabilitat de contenir un cicle Eulerià baixa dràsticament ja que s'han de donar les condicions que hi hagi un cicle i que a més aquest sigui Eulerià. Finalment, es pot veure que amb valors de \textit{p} pròxims a 1, la probabilitat que un gràfic $N=25$, contingui un cicle Eulerià creix fins a 1 un altre cop. Això es deu a que tenir $p=1$ obtens un gràfic complet el qual, si el nombre de vèrtexs és imparell, tindrà un cicle Eulerià.
+Com es pot veure a la Figura \ref{fig:eu_cycle_BRG}, es podria considerar l'existència d'una transició de fase per valors de \textit{p} propers a 0 ja que en aquell moment tot vèrtex amb $g=0$ es considera cicle Eulerià. Però la probabilitat de contenir un cicle Eulerià baixa dràsticament ja que s'han de donar les condicions que hi hagi un cicle i que a més aquest sigui Eulerià. Finalment, es pot veure que amb valors de \textit{p} pròxims a 1, la probabilitat que un gràfic $N=25$, contingui un cicle Eulerià creix fins a 1 un altre cop. Això es deu a que tenir $p=1$ obtens un gràfic complet el qual, si el nombre de vèrtexs és imparell, tindrà un cicle Eulerià.
 
 \begin{figure}[H]
-  i  \centering
+    \centering
     \includegraphics[width=10cm]{plots/GRG_eulerianCycle.pdf}
-    \caption{Eulerian Cycle de RGG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Eulerian Cycle de \RGG per diferents valors de \textit{n}}
+    \label{fig:eu_cycle_RGG}
 \end{figure}
 
-En el cas de \texttt{RGG}, la transició de fase està present per a valors de \textit{p} propers a 0, però en aquest cas, a diferència del \texttt{BRG}, no està tant marcada quan el nombre de vèrtexs és petit. Igual que en el cas de \texttt{BRG}, els vèrtexs amb grau 0 es consideren cicles Eulerians. De nou, amb valors molt elevats de \textit{p} i amb nombre imparell de vèrtexs es pot veure que la probabilitat que contingui un cicle Eulerà torna a créixer. %esto esta bien? a ver, no lo veo mal
+En el cas de \RGG, la transició de fase està present per a valors de \textit{p} propers a 0, però en aquest cas, a diferència del \BRG, no està tant marcada quan el nombre de vèrtexs és petit. Igual que en el cas de \BRG, els vèrtexs amb grau 0 es consideren cicles Eulerians. De nou, amb valors molt elevats de \textit{p} i amb nombre imparell de vèrtexs es pot veure que la probabilitat que contingui un cicle Eulerà torna a créixer. %esto esta bien? a ver, no lo veo mal
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/BRG_eulerianPath.pdf}
-    \caption{Eulerian Path de BRG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Eulerian Path de \BRG per diferents valors de \textit{n}}
+    \label{fig:eu_path_BRG}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+Amb els resultats obtinguts a l'hora de trobar un camí Eulerià podem veure a la Figura \ref{fig:eu_path_BRG} que la transició de fase no està tant marcada com en el de la Figura \ref{fig:eu_cycle_BRG} ja que en aquest cas només s'ha de complir la condició que hi hagi un camí, no que hi hagi un cicle. A més, es pot comprovar que al tenir un gràfic amb un nombre imparell de vèrtexs ($N=25$) i $p=1$ obtens un gràfic complet el qual sempre tindrà un cicle Eulerià i per tant un camí Eulerià.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_eulerianPath.pdf}
-    \caption{Eulerian Path de RGG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Eulerian Path de \RGG per diferents valors de \textit{n}}
+    \label{fig:eu_path_RGG}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+Finalment, amb el \RGG tornem a trobar una transició de fase no tant clara com amb \BRG però tot i així present per valors de p propers a 0 pel mateix motiu que a la Figura \ref{fig:eu_cycle_RGG}. També es pot veure que per valors petits de \textit{N}, com es el cas de $N=10$ la probabilitat d'haver-hi un camí Eulerià va variant però no acaba de ser 0 fins valors de \textit{p} pròxims a 0. I a més en cas de $N=25$ amb \textit{p} proper a 1 torna a pujar la probabilitat de contenir un camí Eulerià com a la Figura \ref{fig:eu_cycle_RGG}.
 
 \subsection{Probabilitat de contenir un cicle}
 %Hipotesis:
-L'últim experiment que hem realitzat és veure si la probabilitat de que un graf contingui un cicle té transició de fase o no. Abans de realitzar l'experiment, havent vist que el cicle Eulerià si que tenia transició de fase vam anticipar que en aquest cas també en tindria i més remarcada.
+L'últim experiment que hem realitzat és veure si la probabilitat de que un graf contingui un cicle té transició de fase o no. Abans de realitzar l'experiment, havent vist que el cicle Eulerià si que tenia transició de fase vam anticipar que en aquest cas també en tindria i més remarcada tant pel \BRG com pel \RGG.
 
 %Código:
 \begin{listing}
 \inputminted[firstline=27,lastline=57]{cpp}{src/graph.cpp}
-\caption{Funció de hasCylces Funció TreeAndForest en graph.cpp}
+\caption{Funció de hasCylces}
 \end{listing}
 
-Per comprovar si el graf conté algún cicle hem creat la funció \textit{hasCycles} que recorre el graf amb un \texttt{BFS} i si en la mateixa component conexa torna a visitar un mateix vértex retorna que ha trobat un cicle.
+Per comprovar si el graf conté algun cicle hem creat la funció \texttt{hasCycles} que recorre el graf amb un \texttt{BFS}, com previament hem explicat, i si en la mateixa component connexa torna a visitar un mateix vèrtex retorna que ha trobat un cicle.
 
 %Resultados:
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/BRG_cicle.pdf}
-    \caption{Probabilitat de tenir un cicle de BRG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Probabilitat de tenir un cicle de \BRG per diferents valors de \textit{n}}
+    \label{fig:BRG_cicle}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+En el cas del \BRG veiem a la Figura 8 com la transició de fase és evident. Per les \emph{N} més grans la transició és molt ràpida i succeeix amb probabilitats molt baixes. Aquest comportament s'explica per que a mesura que tenim més vèrtex, encara que la probabilitat de tenir una aresta entre dos vèrtex sigui baixa, també incrementa la quantitat d'arestes i per tant augmenta la probabilitat de que apareguin cicles. En canvi, com es veu pel cas de $N=10$, per \emph{N} més petites és més difícil que això passi. Per tant, segons els resultats obtinguts, la nostra hipòtesi es confirma pel \BRG.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=10cm]{plots/GRG_cicle.pdf}
-    \caption{Probabilitat de tenir un cicle de RGG per diferents valors de \textit{n}}
-    \label{fig:connect_04}
+    \caption{Probabilitat de tenir un cicle de \RGG per diferents valors de \textit{n}}
+    \label{fig:GRG_cicle}
 \end{figure}
 
-AQUI FALTA COMENTAR LOS RESULTADOS
+Pel \RGG el resultat és similar al \BRG i s'aprecia una transició de fase clara. Entre les \emph{N} més elevades les transicions no són tant semblants i es distingeix més l'efecte de variar \emph{N}, com més vèrtexs tenim més petit és el radi necessari per que la transició aparegui. Com en el \BRG, en el cas de $N=10$ és clarament molt més retardada l'aparició de la transició respecte al radi \emph{r}.
 
 \section{Possibles futurs experiments}
-Com a possibles experiments que finalment no hem volgut exposar havíem fet, aprofitant la probabilitat de si un graf conté un cicle, la probabilitat de que el graf sigués un arbre o un bosc per separat, però veient els resultats no tenía gaire sentit. També havíem pensat en veure si hi ha transició de fase en la probabilitat de que hi hagi un camí o cicle Hamiltonià. A més també havíem considerat indagar la existència de transició de fase de que els grafs siguin bipartits.
+Com a possibles experiments que finalment no hem volgut exposar havíem fet, aprofitant la probabilitat de si un graf
+conté un cicle, la probabilitat de que el graf sigués un arbre (no tenir cicles i ser connex), però veient els resultats
+no tenia gaire sentit.  % lo de no tenir sentit igual s ha de canviar
+També havíem pensat en veure si hi ha transició de fase en la probabilitat de que hi hagi un camí o cicle Hamiltonià. 
+A més també havíem considerat indagar la existència de transició de fase de que els grafs siguin bipartits però
+finalment ens vam decantar per les propietats explicades als experiments.
 
 \section{Conclusions}
 
